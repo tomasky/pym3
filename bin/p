@@ -3,7 +3,7 @@
 #
 # Setup.
 #
-VERSION="1.0.23"
+VERSION="1.0.24"
 UP=$'\033[A'
 DOWN=$'\033[B'
 P_PREFIX=${P_PREFIX-/usr/local}
@@ -170,6 +170,7 @@ display_help() {
     p p                            Wrapper pip command
     p px                           Wrapper pipx command
     p py                           Wrapper poetry command
+    p up                           Wrapper pipdate command
     p migrate <ver1> <ver2>        Migrate pip package from a Python version to another
     p ls                           Output the versions of Python available
       p ls latest                  Output the latest Python version available
@@ -503,7 +504,7 @@ install() {
     export PATH=$BASE_VERSIONS_DIR/python:$PATH
     log refresh $PATH
     log  install pipx 
-    python -m pip install pipx
+    python -m pip install pipx pipdate
     mkdir -p ~/.local/pipx/shared/bin
     ln -sf "$pydir"/pip ~/.local/pipx/shared/bin/pip
     python -m pipx reinstall-all
@@ -709,6 +710,7 @@ else
             p) python -m pip "${@:2}"; exit ;;
             px) python -m pipx "${@:2}"; exit ;;
             py) ~/.local/bin/poetry "${@:2}"; exit ;;
+            up) python -m pipdate "${@:2}"; exit ;;
             default) activate_default; exit ;;
             latest) install "$($0 ls latest)"; exit ;;
             stable) install "$($0 ls stable)"; exit ;;
