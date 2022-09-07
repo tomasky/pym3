@@ -4,16 +4,16 @@
 # Setup.
 #
 #export PYTHON_MIRROR=https://mirrors.huaweicloud.com/python/
-VERSION="1.0.27"
+VERSION="1.0.31"
 UP=$'\033[A'
 DOWN=$'\033[B'
-P_PREFIX=${P_PREFIX-/usr/local}
+P_PREFIX=${P_PREFIX-$HOME/.local}
 BASE_VERSIONS_DIR=$P_PREFIX/p/versions
 #configure flags eg: --enable-optimizations
 PY_INSTALL_FLAG=${PY_INSTALL_FLAG-}
 
 shell() {
-  export PATH=$BASE_VERSIONS_DIR/python:~/.local/bin:$PATH
+  export PATH=$BASE_VERSIONS_DIR/python:$HOME/.local/bin:$PATH
   get_current_version
   export PATH=$BASE_VERSIONS_DIR/python/$current/bin:$PATH
   bash --rcfile <(echo "export PS1='(py$current)[\w]> '")
@@ -23,11 +23,11 @@ shell() {
 #
 ensurepath() {
   if ! grep -q "export PATH=$BASE_VERSIONS_DIR/python:\$PATH" ~/.bashrc; then
-      echo -e "\nexport PATH=$BASE_VERSIONS_DIR/python:~/.local/bin:\$PATH" >> ~/.bashrc
+      echo -e "\nexport PATH=$BASE_VERSIONS_DIR/python:$HOME/.local/bin:\$PATH" >> ~/.bashrc
   fi
 
   if test -f ~/.zshrc && ! grep -q "export PATH=\"$BASE_VERSIONS_DIR/python:\$PATH\"" ~/.zshrc; then
-      echo -e "\nexport PATH=\"$BASE_VERSIONS_DIR/python:~/.local/bin:\$PATH\"" >> ~/.zshrc
+      echo -e "\nexport PATH=\"$BASE_VERSIONS_DIR/python:$HOME/.local/bin:\$PATH\"" >> ~/.zshrc
   fi
   exec $SHELL
 }
@@ -165,6 +165,7 @@ display_help() {
     p bin <version>                Output bin path for <version>
     p rm <version ...>             Remove the given version(s)
     p prev                         Revert to the previously activated version
+    p default                      Revert to the system default python version
     p ensurepath                   Add python path to your search path
     p unpkg <pkg ...>              Remove the given name(s) pip packages and unused dependencies
     p shell                        Add python bin path to a new bash shell  
@@ -184,8 +185,8 @@ display_help() {
 
   Environment variables:
 
-    P_PREFIX        Python versions installation dir ,default:/usr/local
-    PY_INSTALL_FLAG Python installation configure flags, eg:--enable-optimizations
+    P_PREFIX        Python versions installation dir ,default: ~/.local
+    PY_INSTALL_FLAG Python installation configure flags, eg: --enable-optimizations
 EOF
     exit 0
 }
@@ -374,7 +375,8 @@ is_ok() {
 
 tarball_url() {
     version_directory="${version%a*}"
-    echo "${MIRROR[@]}${version_directory%b*}/Python-${version}.tgz"
+    version_directory="${version_directory%b*}"
+    echo "${MIRROR[@]}${version_directory%r*}/Python-${version}.tgz"
 }
 
 #
@@ -388,6 +390,11 @@ activate() {
         echo "$active" > "$BASE_VERSIONS_DIR"/.prev
 
         ln -sf "$BASE_VERSIONS_DIR"/"$version"/bin/python3 "$BASE_VERSIONS_DIR"/python/python
+
+        if test -d "$HOME/.local/pipx/shared/bin"; then
+          ln -sf "$BASE_VERSIONS_DIR"/"$version"/bin/pip $HOME/.local/pipx/shared/bin/pip
+          "$BASE_VERSIONS_DIR"/python/python -m pipx reinstall-all
+        fi
     fi
 }
 
@@ -417,9 +424,10 @@ activate_default() {
     log activate default
 
     rm -rf "$BASE_VERSIONS_DIR"/python/python
+    exec $SHELL
 
     get_current_version
-    success "Now using Python $current!\n  Use \`p <version>\` to activate another version."
+    success "Now using system default Python $current!\n  Use \`p <version>\` to activate another version."
 }
 
 #
@@ -456,8 +464,6 @@ install() {
 
             get_current_version
             
-            ln -sf "$pydir"/pip ~/.local/pipx/shared/bin/pip
-            "$pydir"/../python -m pipx reinstall-all
             success "Now using Python $current!"
 
             exit
@@ -601,8 +607,8 @@ display_latest_version() {
         | sort -u -k 1,1n -k 2,2n -k 3,3n -t . \
         | tail -n1)
 
-    $GET 2> /dev/null "${MIRROR[@]}" "$latest_directory" \
-        | egrep -o '[0-9]+\.[0-9]+\.[0-9]+[a|b][0-9]+' \
+    $GET 2> /dev/null "${MIRROR[@]}$latest_directory/" \
+        | egrep -o '[0-9]+\.[0-9]+\.[0-9]+[a|b|r]c?[0-9]+' \
         | sort -k 1,1n -k 2,2n -k 3,3n -t . -k 4,4n -d -k 5,5n -d \
         | tail -n1
 }
