@@ -3,8 +3,8 @@
 #
 # Setup.
 #
-#export PYTHON_MIRROR=https://mirrors.huaweicloud.com/python/
-VERSION="1.0.32"
+export PYTHON_MIRROR=https://mirrors.huaweicloud.com/python/
+VERSION="1.0.34"
 UP=$'\033[A'
 DOWN=$'\033[B'
 P_PREFIX=${P_PREFIX-$HOME/.local}
@@ -22,12 +22,16 @@ shell() {
 # Add to PATH.
 #
 ensurepath() {
-  if ! grep -q "export PATH=$BASE_VERSIONS_DIR/python:" ~/.bashrc; then
-      echo -e "\nexport PATH=$BASE_VERSIONS_DIR/python:$HOME/.local/bin:\$PATH" >> ~/.bashrc
+  BASE_DIR=$BASE_VERSIONS_DIR/python
+  if echo $BASE_VERSIONS_DIR | egrep -q $HOME; then 
+    BASE_DIR=${BASE_DIR/$HOME/"\$HOME"}
+  fi
+  if test -f $HOME/.bashrc && ! grep -q "export PATH=\"$BASE_DIR:" $HOME/.bashrc; then
+      echo -e "\nexport PATH=\"$BASE_DIR:\$HOME/.local/bin:\$PATH\"" >> $HOME/.bashrc
   fi
 
-  if test -f ~/.zshrc && ! grep -q "export PATH=\"$BASE_VERSIONS_DIR/python:" ~/.zshrc; then
-      echo -e "\nexport PATH=\"$BASE_VERSIONS_DIR/python:$HOME/.local/bin:\$PATH\"" >> ~/.zshrc
+  if test -f $HOME/.zshrc && ! grep -q "export PATH=\"$BASE_DIR:" $HOME/.zshrc; then
+      echo -e "\nexport PATH=\"$BASE_DIR:\$HOME/.local/bin:\$PATH\"" >> $HOME/.zshrc
   fi
   exec $SHELL
 }
