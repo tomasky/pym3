@@ -38,7 +38,7 @@ p shell                        Add python bin path to a new bash shell
 p p                            Wrapper pip command
 p px                           Wrapper pipx command
 p py                           Wrapper poetry command
-p up                           Wrapper pipdate command,update all pip packages
+p up                           Update all pipx libs,Wrapper pipdate command,update all pip packages
 p migrate <ver1> <ver2>        Migrate pip package from a Python version to another
 p ls                           Output the versions of Python available
 	p ls latest                  Output the latest Python version available
@@ -51,7 +51,7 @@ Options:
 
 Environment variables:
 
-P_PREFIX        P cli and python install dir ,default:/usr/local
+P_PREFIX        P cli and Python installation dir ,default:/usr/local
 PY_INSTALL_FLAG Python install configure flags, eg:--enable-optimizations
 ```
 
@@ -98,10 +98,17 @@ npm install -g pym3
 
 So far, `p` has only been tested in Bash. If you can make `p` work on another shell, please send in a pull request!
 
-Set python download mirror:
+Set `python` download mirror:
 
 ```shell
 export PYTHON_MIRROR=https://mirrors.huaweicloud.com/python/
+```
+
+Set `p` and `python` installation dir:
+
+```shell
+# default:/usr/local
+export P_PREFIX=~/.local
 ```
 
 ## Updating
