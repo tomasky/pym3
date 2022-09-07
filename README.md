@@ -52,7 +52,7 @@ Options:
 Environment variables:
 
 P_PREFIX        Python versions installation dir ,default:/usr/local
-PY_INSTALL_FLAG Python install configure flags, eg:--enable-optimizations
+PY_INSTALL_FLAG Python installation configure flags, eg:--enable-optimizations
 ```
 
 ## Installation Python dependencies
