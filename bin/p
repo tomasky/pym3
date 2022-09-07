@@ -3,7 +3,7 @@
 #
 # Setup.
 #
-export PYTHON_MIRROR=https://mirrors.huaweicloud.com/python/
+#export PYTHON_MIRROR=https://mirrors.huaweicloud.com/python/
 VERSION="1.0.34"
 UP=$'\033[A'
 DOWN=$'\033[B'
