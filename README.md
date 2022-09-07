@@ -32,6 +32,7 @@ p use <version> [args ...]     Execute Python <version> with [args ...]
 p bin <version>                Output bin path for <version>
 p rm <version ...>             Remove the given version(s)
 p prev                         Revert to the previously activated version
+p default                      Revert to the system default python version
 p ensurepath                   Add python path to your search path
 p unpkg <pkg ...>              Remove the given name(s) pip packages and unused dependencies
 p shell                        Add python bin path to a new bash shell
@@ -51,8 +52,8 @@ Options:
 
 Environment variables:
 
-P_PREFIX        Python versions installation dir ,default:/usr/local
-PY_INSTALL_FLAG Python installation configure flags, eg:--enable-optimizations
+P_PREFIX        Python versions installation dir ,default: ~/.local
+PY_INSTALL_FLAG Python installation configure flags, eg: --enable-optimizations
 ```
 
 ## Installation Python dependencies
@@ -98,17 +99,19 @@ npm install -g pym3
 
 So far, `p` has only been tested in Bash. If you can make `p` work on another shell, please send in a pull request!
 
-Set `python` download mirror:
-
-```shell
-export PYTHON_MIRROR=https://mirrors.huaweicloud.com/python/
-```
-
 Set `python` versions installation dir:
 
 ```shell
-# default:/usr/local
-export P_PREFIX=~/.local
+# default is `~/.local`
+# add this to .bashrc
+export P_PREFIX=/usr/local
+```
+
+Set `python` download mirror:
+
+```shell
+# add this to .bashrc
+export PYTHON_MIRROR=https://mirrors.huaweicloud.com/python/
 ```
 
 ## Updating
