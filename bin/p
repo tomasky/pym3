@@ -184,8 +184,8 @@ display_help() {
 
   Environment variables:
 
-    P_PREFIX        P cli and python install dir ,default:/usr/local
-    PY_INSTALL_FLAG Python install configure flags, eg:--enable-optimizations
+    P_PREFIX        Python versions installation dir ,default:/usr/local
+    PY_INSTALL_FLAG Python installation configure flags, eg:--enable-optimizations
 EOF
     exit 0
 }
