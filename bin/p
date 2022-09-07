@@ -4,7 +4,7 @@
 # Setup.
 #
 #export PYTHON_MIRROR=https://mirrors.huaweicloud.com/python/
-VERSION="1.0.34"
+VERSION="1.0.35"
 UP=$'\033[A'
 DOWN=$'\033[B'
 P_PREFIX=${P_PREFIX-$HOME/.local}
@@ -23,7 +23,7 @@ shell() {
 #
 ensurepath() {
   BASE_DIR=$BASE_VERSIONS_DIR/python
-  if echo $BASE_VERSIONS_DIR | egrep -q $HOME; then 
+  if echo $BASE_VERSIONS_DIR | egrep -q ^$HOME; then 
     BASE_DIR=${BASE_DIR/$HOME/"\$HOME"}
   fi
   if test -f $HOME/.bashrc && ! grep -q "export PATH=\"$BASE_DIR:" $HOME/.bashrc; then
