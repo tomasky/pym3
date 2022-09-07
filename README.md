@@ -51,7 +51,7 @@ Options:
 
 Environment variables:
 
-P_PREFIX        P cli and Python installation dir ,default:/usr/local
+P_PREFIX        Python versions installation dir ,default:/usr/local
 PY_INSTALL_FLAG Python install configure flags, eg:--enable-optimizations
 ```
 
@@ -104,7 +104,7 @@ Set `python` download mirror:
 export PYTHON_MIRROR=https://mirrors.huaweicloud.com/python/
 ```
 
-Set `p` and `python` installation dir:
+Set `python` versions installation dir:
 
 ```shell
 # default:/usr/local
