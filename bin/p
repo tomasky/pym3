@@ -4,7 +4,7 @@
 # Setup.
 #
 #export PYTHON_MIRROR=https://mirrors.huaweicloud.com/python/
-VERSION="1.0.31"
+VERSION="1.0.32"
 UP=$'\033[A'
 DOWN=$'\033[B'
 P_PREFIX=${P_PREFIX-$HOME/.local}
@@ -22,11 +22,11 @@ shell() {
 # Add to PATH.
 #
 ensurepath() {
-  if ! grep -q "export PATH=$BASE_VERSIONS_DIR/python:\$PATH" ~/.bashrc; then
+  if ! grep -q "export PATH=$BASE_VERSIONS_DIR/python:" ~/.bashrc; then
       echo -e "\nexport PATH=$BASE_VERSIONS_DIR/python:$HOME/.local/bin:\$PATH" >> ~/.bashrc
   fi
 
-  if test -f ~/.zshrc && ! grep -q "export PATH=\"$BASE_VERSIONS_DIR/python:\$PATH\"" ~/.zshrc; then
+  if test -f ~/.zshrc && ! grep -q "export PATH=\"$BASE_VERSIONS_DIR/python:" ~/.zshrc; then
       echo -e "\nexport PATH=\"$BASE_VERSIONS_DIR/python:$HOME/.local/bin:\$PATH\"" >> ~/.zshrc
   fi
   exec $SHELL
@@ -345,8 +345,12 @@ display_versions() {
             display_versions_with_selected "$(next_version_installed)"
             ;;
             *)
-            activate "$selected"
+            activate "$selected" leave
             leave_fullscreen
+
+            if [[ "$active" = "" ]]; then
+              exec $SHELL
+            fi
             exit
             ;;
         esac
@@ -387,13 +391,18 @@ activate() {
     local version=$1
     check_current_version
     if test "$version" != "$active"; then
-        echo "$active" > "$BASE_VERSIONS_DIR"/.prev
+        
+        test -z "$active" || echo "$active" > "$BASE_VERSIONS_DIR"/.prev
 
         ln -sf "$BASE_VERSIONS_DIR"/"$version"/bin/python3 "$BASE_VERSIONS_DIR"/python/python
 
         if test -d "$HOME/.local/pipx/shared/bin"; then
           ln -sf "$BASE_VERSIONS_DIR"/"$version"/bin/pip $HOME/.local/pipx/shared/bin/pip
           "$BASE_VERSIONS_DIR"/python/python -m pipx reinstall-all
+
+          if [[ "$active" = "" ]] && [[ "$2" != "leave" ]]; then
+            exec $SHELL
+          fi
         fi
     fi
 }
@@ -457,7 +466,7 @@ install() {
     url=$(tarball_url "$version")
 
     if test -d "$pydir"; then
-        if [[ ! -e "$dir"/n.lock ]] ; then
+        if [[ ! -e "$dir"/p.lock ]] ; then
             activate python/"$version"
 
             log activate "$version"
